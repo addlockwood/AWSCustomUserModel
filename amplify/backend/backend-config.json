@@ -1,0 +1,11 @@
+{
+  "auth": {
+    "busybook37a2a8e5": {
+      "service": "Cognito",
+      "serviceType": "imported",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  }
+}

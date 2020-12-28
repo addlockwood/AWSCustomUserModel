@@ -1,24 +1,29 @@
-import logo from './logo.svg';
 import './App.css';
+import { useState, useEffect } from 'react';
+import { AmplifySignOut } from '@aws-amplify/ui-react';
+import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components';
+import UnAuthWelcome from './components/UnAuthWelcome';
 
 function App() {
-  return (
+  const [authState, setAuthState] = useState();
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    onAuthUIStateChange((nextAuthState, authData) => {
+      setAuthState(nextAuthState);
+      setUser(authData);
+    });
+  }, [])
+
+  return authState === AuthState.SignedIn && user ? (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div> Hello, User 1234</div>
+      <p>That's a pretty unoriginal name.</p>
+      <p>JK...Welecome {user.attributes.name} {user.attributes.family_name}</p>
+      <AmplifySignOut />
     </div>
+  ) : (
+    <UnAuthWelcome />
   );
 }
 
