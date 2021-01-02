@@ -1,5 +1,7 @@
 import React from 'react';
-import { AmplifyAuthenticator, AmplifySignUp, AmplifySignIn } from '@aws-amplify/ui-react';
+import { AmplifyConfirmSignUp, AmplifyAuthenticator,
+    AmplifySignUp, AmplifySignIn } from '@aws-amplify/ui-react';
+// import ConfirmSignUp from './auth/ConfirmSignUp';
 
 const UnAuthWelcome = () => {
   return (
@@ -43,7 +45,14 @@ const UnAuthWelcome = () => {
           },
         ]} 
       />
+      <AmplifyConfirmSignUp
+        slot="confirm-sign-up"
+        usernameAlias="email"
+        headerText="Confirm Sign Up Bitch"
+        formFields={[{}]}
+        />
       <AmplifySignIn slot="sign-in" usernameAlias="email" />
+
     </AmplifyAuthenticator>
     </>
   );

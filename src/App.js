@@ -1,30 +1,39 @@
-import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState, useEffect } from 'react';
-import { AmplifySignOut } from '@aws-amplify/ui-react';
-import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components';
-import UnAuthWelcome from './components/UnAuthWelcome';
+import AuthenticatedApp from './AuthenticatedApp'
+import CustomAuthenticator from './components/auth/CustomAwsAuthenticator';
+import { Auth } from 'aws-amplify';
+
 
 function App() {
-  const [authState, setAuthState] = useState();
-  const [user, setUser] = useState();
-
+  const [user, setUser] = useState();  
   useEffect(() => {
-    onAuthUIStateChange((nextAuthState, authData) => {
-      setAuthState(nextAuthState);
-      setUser(authData);
-    });
-  }, [])
-
-  return authState === AuthState.SignedIn && user ? (
-    <div className="App">
-      <div> Hello, User 1234</div>
-      <p>That's a pretty unoriginal name.</p>
-      <p>JK...Welecome {user.attributes.name} {user.attributes.family_name}</p>
-      <AmplifySignOut />
-    </div>
-  ) : (
-    <UnAuthWelcome />
-  );
+    if ( user && user.confirmed) {return;}
+    Auth.currentAuthenticatedUser()
+      .then(({ attributes }) => {
+        console.log("App redered good res: ", attributes);
+        setUser({
+          first_name: attributes.name,
+          last_name: attributes.family_name,
+          profession: attributes["custom:profession_type"],
+          email: attributes.email,
+          confirmed: true
+        });
+      })
+      .catch(err => console.log("App rendered err: ", err));
+  }, [user]);
+  
+  if ( user && user.confirmed) {
+    return <AuthenticatedApp  data={user} setAuthData={setUser} />;
+  }
+  else {
+    return (
+      <CustomAuthenticator 
+        setAuthData={setUser}
+        data={user}
+      />
+    );
+  }
 }
 
 export default App;
